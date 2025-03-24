@@ -1,4 +1,5 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/WXeqVgks)
+
 # final-project-skeleton
 
 * Team Number:
@@ -13,17 +14,29 @@
 
 *In a few sentences, describe your final project.*
 
+The goal of this final project is to detect and track bruxism (involuntary grinding of teeth). The device is worn as a headband when you're asleep, that uses EMG sensors to detect when your jaw muscles contract. It displays the results on an LCD screen that graphs how much time you spent grinding. There could also be a version with day time use, where it simply makes a sound whenever someone is grinding. This will alert them so they consciously stop grinding.
+
 ### 2. Motivation
 
-*What is the problem that you are trying to solve? Why is this project interesting? What is the intended purpose?*
+Bruxism can lead to serious complications for a person's dental and oral health. It can cause jaw/tooth pain, wear your teeth down, and contribute to TMJ disorders. Current methods to diagnose nightly bruxism are cumbersome because it can involve having to get a sleep study. Simply wearing the device for a couple of nights offers a simpler solution for doctors to diagnose this issue.
 
 ### 3. System Block Diagram
 
 *Show your high level design, as done in WS1 and WS2. What are the critical components in your system? How do they communicate (I2C?, interrupts, ADC, etc.)? What power regulation do you need?*
 
+![Block Diagram](images/block_diagram.png)
+
 ### 4. Design Sketches
 
 *What will your project look like? Do you have any critical design features? Will you need any special manufacturing techniques to achieve your vision, like power tools, laser cutting, or 3D printing?*
+
+Design considerations:
+
+1. Placement of sensors and electronics
+
+Manufacturing
+
+1. There won't be any special manufacturing techniques other than 3D printing and/or laser cutting an enclosure for the electronics.
 
 ### 5. Software Requirements Specification (SRS)
 
@@ -35,16 +48,22 @@
 
 Here, you will define any special terms, acronyms, or abbreviations you plan to use for hardware
 
+EMG: Electromyography
+
+LCD: Liquid crystal display
+
+Temporalis muscle: Jaw muscle that can be felt contracting on one's temple
+
 **5.2 Functionality**
 
-| ID     | Description                                                                                                                                                                                                              |
-| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| SRS-01 | The IMU 3-axis acceleration will be measured with 16-bit depth every 100 milliseconds +/-10 milliseconds                                                                                                                 |
-| SRS-02 | The distance sensor shall operate and report values at least every .5 seconds.                                                                                                                                           |
-| SRS-03 | Upon non-nominal distance detected (i.e., the trap mechanism has changed at least 10 cm from the nominal range), the system shall be able to detect the change and alert the user in a timely manner (within 5 seconds). |
-| SRS-04 | Upon a request from the user, the system shall get an image from the internal camera and upload the image to the user system within 10s.                                                                                 |
+| ID     | Description                                                                                                           |
+| ------ | --------------------------------------------------------------------------------------------------------------------- |
+| SRS-01 | The EMG sensor will detect changes in muscle activation of the temporalis muscle                                      |
+| SRS-02 | The ADC will convert the analog signals from the EMG into                                                             |
+| SRS-03 | The LCD display will show the intensity of grinding over time for the night (using the real time clock to track time) |
+| SRS-04 | During the day time a buzzer sounds when the clenching is above a certain threshold                                   |
 
-### 6. Hardware Requirements Specification (HRS)
+### 6. Hardware Requirements Specification (SRS)
 
 *Formulate key hardware requirements here. Think deeply on the design: What must your device do? How will you measure this during validation testing? Create 4 to 8 critical system requirements.*
 
@@ -54,14 +73,16 @@ Here, you will define any special terms, acronyms, or abbreviations you plan to 
 
 Here, you will define any special terms, acronyms, or abbreviations you plan to use for hardware
 
+ADC (analog to digital conversion)
+
 **6.2 Functionality**
 
-| ID     | Description                                                                                                                        |
-| ------ | ---------------------------------------------------------------------------------------------------------------------------------- |
-| HRS-01 | A distance sensor shall be used for obstacle detection. The sensor shall detect obstacles at a maximum distance of at least 10 cm. |
-| HRS-02 | A noisemaker shall be inside the trap with a strength of at least 55 dB.                                                           |
-| HRS-03 | An electronic motor shall be used to reset the trap remotely and have a torque of 40 Nm in order to reset the trap mechanism.      |
-| HRS-04 | A camera sensor shall be used to capture images of the trap interior. The resolution shall be at least 480p.                       |
+| ID     | Description                                                                           |
+| ------ | ------------------------------------------------------------------------------------- |
+| HRS-01 | The EMG sensors should be substantially sensitive to detect small muscle contractions |
+| HRS-02 | The ADC module should support sufficient resolution for the signal                    |
+| HRS-03 | The headband should be somewhat comfortable                                           |
+| HRS-04 | Have a real time clock that can track over long periods time                          |
 
 ### 7. Bill of Materials (BOM)
 
@@ -69,20 +90,24 @@ Here, you will define any special terms, acronyms, or abbreviations you plan to 
 
 *In addition to this written response, copy the Final Project BOM Google Sheet and fill it out with your critical components (think: processors, sensors, actuators). Include the link to your BOM in this section.*
 
+https://docs.google.com/spreadsheets/d/1-zWV1aL9oH2EXkD6tylsm7H7TjFfnVomCbpaZuMzBcA/edit?usp=sharing
+
 ### 8. Final Demo Goals
 
 *How will you demonstrate your device on demo day? Will it be strapped to a person, mounted on a bicycle, require outdoor space? Think of any physical, temporal, and other constraints that could affect your planning.*
+
+For demo day we will test the device on one of our team members, and show the LCD updating in real time as well as the buzzer.
 
 ### 9. Sprint Planning
 
 *You've got limited time to get this project done! How will you plan your sprint milestones? How will you distribute the work within your team? Review the schedule in the final project manual for exact dates.*
 
-| Milestone  | Functionality Achieved | Distribution of Work |
-| ---------- | ---------------------- | -------------------- |
-| Sprint #1  |                        |                      |
-| Sprint #2  |                        |                      |
-| MVP Demo   |                        |                      |
-| Final Demo |                        |                      |
+| Milestone  | Functionality Achieved                                       | Distribution of Work                            |
+| ---------- | ------------------------------------------------------------ | ----------------------------------------------- |
+| Sprint #1  | Reading data from muscle contraction                         | 1 team member sets up hardware, other 2 code it |
+| Sprint #2  | LCD graph of clenching time, buzzer that alerts to clenching | all 3 team members code and debug               |
+| MVP Demo   | Integration of previous sprints                              | 3 team members optimize embedded system         |
+| Final Demo | All parts working along with sleeker mechanical design       | All members work on mechanical design and final |
 
 **This is the end of the Project Proposal section. The remaining sections will be filled out based on the milestone schedule.**
 
