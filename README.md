@@ -38,7 +38,11 @@ Manufacturing
 
 1. There won't be any special manufacturing techniques other than 3D printing and/or laser cutting an enclosure for the electronics.
 
-### 5. Software Requirements Specification (SRS)
+5. Software Requirements Specification (SRS)
+
+# Design Sketch
+
+![Design Sketch](images/design_sketch.png)
 
 *Formulate key software requirements here. Think deeply on the design: What must your device do? How will you measure this during validation testing? Create 4 to 8 critical system requirements.*
 
