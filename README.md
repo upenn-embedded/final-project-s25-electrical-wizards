@@ -33,16 +33,19 @@ Bruxism can lead to serious complications for a person's dental and oral health.
 Design considerations:
 
 1. Placement of sensors and electronics
+2. Sensitivity of sensor that measures contraction
+3. 
 
 Manufacturing
 
 1. There won't be any special manufacturing techniques other than 3D printing and/or laser cutting an enclosure for the electronics.
 
-5. Software Requirements Specification (SRS)
 
 # Design Sketch
 
 ![Design Sketch](images/design_sketch.png)
+
+### 5. Software Requirements Specification (SRS)
 
 *Formulate key software requirements here. Think deeply on the design: What must your device do? How will you measure this during validation testing? Create 4 to 8 critical system requirements.*
 
