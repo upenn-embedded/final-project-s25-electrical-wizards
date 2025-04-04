@@ -2,10 +2,10 @@
 
 # final-project-skeleton
 
-* Team Number:
-* Team Name:
-* Team Members:
-* GitHub Repository URL:
+* Team Number: 5
+* Team Name: Electrical Wizards
+* Team Members: Adam Shamash, Michael Aizenberg, Sam Gray
+* GitHub Repository URL: https://github.com/upenn-embedded/final-project-s25-electrical-wizards.git
 * GitHub Pages Website URL: [for final submission]
 
 ## Final Project Proposal
