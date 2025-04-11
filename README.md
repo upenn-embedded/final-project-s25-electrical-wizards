@@ -40,7 +40,6 @@ Manufacturing
 
 1. There won't be any special manufacturing techniques other than 3D printing and/or laser cutting an enclosure for the electronics.
 
-
 # Design Sketch
 
 ![Design Sketch](images/design_sketch.png)
@@ -122,17 +121,35 @@ For demo day we will test the device on one of our team members, and show the LC
 
 ### Last week's progress
 
+Over this week our goal was to try to get the jaw clenching sensing down and interfaced with the atmega. We made significant progress with this by testing various sensors and we were successfully able to read values from the force sensitive resistor. We set up a voltage divider with the sensor and a set resistance value and converted the analog signal to a digital one. We aren't sure exactly if this will pan out to the final product because it's not very sensitive to the muscle movements. So we also tested various EMG sensors that we ordered/had available. They seem to be tracking the muscle contractions better (since thats what they're actually built for. We're able to read analog values on the scope, but they will need a lot more processing for the final product.
+
+[https://drive.google.com/file/d/1IZ25nzlBHVpCWKgTvnpPDgVcIyl4WT8e/view?usp=drive_link](https://urldefense.com/v3/__https://drive.google.com/file/d/1IZ25nzlBHVpCWKgTvnpPDgVcIyl4WT8e/view?usp=drive_link__;!!IBzWLUs!UGNzIMPeejVOO6jmQ7SIQz7D42Xgi_ii_dkTf_qsw6nuW17fmtB2CERJciw6ATmgj1CIfD-GhR4P2WBRqG_7nw3z$)
+
 ### Current state of project
 
+One sensor option working, (thought we were told it wasn't complex enough).
+
 ### Next week's plan
+
+Divide and conquer. One team member works on the RTC and LCD screen, one team member figures out the signal processing, one team member figures out the app.
 
 ## Sprint Review #2
 
 ### Last week's progress
 
+Over the past week our goal was to solidify the sensor readings and get the LCD screen plotting graphs. So far we have gotten the LCD screen to display a graph image and have successfully plotted dummy graph data. We got the EMG sensor to output an analog signal that can be succesfully converted to digital values. There's still some work left to do to process this data and then display it on the graph. We also got the real time clock to work over i2c. Another group member was working on the ESP32 app integration, but there were some debugging issues there.
+
+https://drive.google.com/file/d/1-YQYbSzBp0TBx5U1PUz_vQ8te4gLAX2D/view?usp=sharing
+
+https://drive.google.com/file/d/1UxyY6kfUbMNISJIG7tiHbU9iLg-6Rss-/view?usp=sharing
+
 ### Current state of project
 
+We essentially just have to integrate all the parts of the project together, and get the app working.
+
 ### Next week's plan
+
+Over this next week we will finalize each individual piece of the project and then put it together.
 
 ## MVP Demo
 
