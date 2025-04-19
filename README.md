@@ -65,9 +65,13 @@ Temporalis muscle: Jaw muscle that can be felt contracting on one's temple
 | ID     | Description                                                                                                           |
 | ------ | --------------------------------------------------------------------------------------------------------------------- |
 | SRS-01 | The EMG sensor will detect changes in muscle activation of the temporalis muscle                                      |
-| SRS-02 | The ADC will convert the analog signals from the EMG into                                                             |
+| SRS-02 | The ADC will convert the analog signals from the EMG into digital values                                              |
 | SRS-03 | The LCD display will show the intensity of grinding over time for the night (using the real time clock to track time) |
 | SRS-04 | During the day time a buzzer sounds when the clenching is above a certain threshold                                   |
+|        | LCD will comunicate over SPI                                                                                          |
+|        | RTC will communicate over I2c                                                                                         |
+|        | ESP32 will communicate to atmega over uart, and it will communicate with the blynk iot app                            |
+|        |                                                                                                                       |
 
 ### 6. Hardware Requirements Specification (SRS)
 
@@ -83,12 +87,15 @@ ADC (analog to digital conversion)
 
 **6.2 Functionality**
 
-| ID     | Description                                                                           |
-| ------ | ------------------------------------------------------------------------------------- |
-| HRS-01 | The EMG sensors should be substantially sensitive to detect small muscle contractions |
-| HRS-02 | The ADC module should support sufficient resolution for the signal                    |
-| HRS-03 | The headband should be somewhat comfortable                                           |
-| HRS-04 | Have a real time clock that can track over long periods time                          |
+| ID     | Description                                                                                      |
+| ------ | ------------------------------------------------------------------------------------------------ |
+| HRS-01 | The EMG sensors should be substantially sensitive to detect small muscle contractions (quantify) |
+| HRS-02 | The ADC module should support sufficient resolution for the signal (quantify)                    |
+| HRS-03 | The headband should be somewhat comfortable                                                      |
+| HRS-04 | Have a real time clock that can track over long periods time                                     |
+|        | Power                                                                                            |
+|        | Filter (specify what frequencies it's cutting off)                                               |
+|        | ESP32 with logic shifter                                                                         |
 
 ### 7. Bill of Materials (BOM)
 
@@ -154,19 +161,45 @@ Over this next week we will finalize each individual piece of the project and th
 ## MVP Demo
 
 1. Show a system block diagram & explain the hardware implementation.
+
+   <img src="blockDiagramMVP.png" alt="Block Diagram" width="400" height="300">
 2. Explain your firmware implementation, including application logic and critical drivers you've written.
+
+   Most of the LCD implementation was taken from Lab4, and we added the logic/code that generates a graph over time. For the real time clock, we had to create our own i2c library for it. After setting the necessary register bits in the atmega for i2c, we created a few functions that set the time and get the time of the clock. Time is stored in a few registers from 00 to 07. The registers are seconds, minutes, hours, day, month year. In order to set time, we have to write the address of the clock, then the address of the register that we want to write, then the value in BCD format. Getting time is a similar process, but in reverse.
 3. Demo your device.
+
+   https://drive.google.com/file/d/1qDcoZRG4p9KLhYcpPG2Q98YLUuNXgrrb/view?usp=sharing
 4. Have you achieved some or all of your Software Requirements Specification (SRS)?
 
-   1. Show how you collected data and the outcomes.
+   We have achieved most of our software requirements but not all of them
+
+   - We WERE able to get the EMG sensor to detect the temporalis muscle clenching. We first made sure we got analog values by hooking up to a scope, then proceeded to implement interfacing with the atmega
+   - We WERE able to convert the analog sensor values to digital values with the atmega onboard ADC. After we got the scope to read the sensor values, we implemented communication with the atmega.
+   - The LCD DOES show the intensity of clenching over time on a graph
+   - We have not yet impemented the buzzer sound that occurs during the day when a clenching event occurs. At this point it will be an addon if we have time, as our ultimate goal is implementing the night diagnoses
+   - The LCD DOES communicate over SPI
+   - The RTC DOES communicate over I2C
+   - We have had trouble getting the ESP32 to communicate with the atmega32, so have not accomplished this yet
 5. Have you achieved some or all of your Hardware Requirements Specification (HRS)?
 
-   1. Show how you collected data and the outcomes.
+   - The EMG sensor WAS able to pick up the small muscle contractions of the jaw muscle. This is quantified by the range of voltage that the emg sensor would pick up. When there was no clenching, the scope read 0 V. When their was clenching there was about 3V.
+   - The ADC module DOES have sufficient resolution to convert the analog values of the sensor to digital values. After hooking it up to the atmega, we were able to get the ADC conversion to scale from 0 to 1023, which was our goal.
+   - We haven't gotten to the point of putting the whole product together with the headband (as all the electronics are still a jumble of wires), however currently when wearing the headband with just the sensor it's fairly comfortable.
+   - The real time clock worked very well
+   - We added a custom power module in order to run the device when not plugged in to the computer. It is simply a buck converter with a few external components surrouonding it (mostly capacitors and the battery mount thing). Now, when a 9V battery is connected, the whole system can be powered which is the ultimate goal for this product (since you don't want to sleep with something plugged into an outlet/computer).
+   - In order to get the EMG sensor values to properly be read, we had to include an RC high pass filter that filtered out the noise. This is ultimately what made us able to read the values accurately.
+   - The ESP32 and logic shifter were not included in our original HRS so this is a note that we added those componenets
 6. Show off the remaining elements that will make your project whole: mechanical casework, supporting graphical user interface (GUI), web portal, etc.
+
+   We begun the design of the mechanical casing in solidworks, but still need to make significant progess with that.
 7. What is the riskiest part remaining of your project?
+   The riskiest part will be transferring the completed circuit to the mechanical enclosure (where we will also try to switch out the wires to the flat ones that don't clutter up the circuit). This is risky because if we make any mistakes in doing this, we will have to debug the hardware for an issue, which will be stressful as we approach the final demo day deadline.
 
    1. How do you plan to de-risk this?
+      We will make sure to transfer each subsystem one by one and very carefully, and then test the code for that subsystem to make sure that it works.
 8. What questions or help do you need from the teaching team?
+
+See ED discussion (the uart issues)
 
 ## Final Project Report
 
