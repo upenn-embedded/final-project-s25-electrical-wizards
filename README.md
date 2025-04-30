@@ -87,15 +87,15 @@ ADC (analog to digital conversion)
 
 **6.2 Functionality**
 
-| ID     | Description                                                                                      |
-| ------ | ------------------------------------------------------------------------------------------------ |
-| HRS-01 | The EMG sensors should be substantially sensitive to detect small muscle contractions (quantify) |
-| HRS-02 | The ADC module should support sufficient resolution for the signal (quantify)                    |
-| HRS-03 | The headband should be somewhat comfortable                                                      |
-| HRS-04 | Have a real time clock that can track over long periods time                                     |
-|        | Power                                                                                            |
-|        | Filter (specify what frequencies it's cutting off)                                               |
-|        | ESP32 with logic shifter                                                                         |
+| ID     | Description                                                                           |
+| ------ | ------------------------------------------------------------------------------------- |
+| HRS-01 | The EMG sensors should be substantially sensitive to detect small muscle contractions |
+| HRS-02 | The ADC module should support sufficient resolution for the signal                    |
+| HRS-03 | The headband should be somewhat comfortable                                           |
+| HRS-04 | Have a real time clock that can track over long periods time                          |
+|        | Power module with battery add-on and buck converter                                   |
+|        | High pass RC filter                                                                   |
+|        | ESP32 with logic shifter                                                              |
 
 ### 7. Bill of Materials (BOM)
 
@@ -208,7 +208,7 @@ If you’ve never made a GitHub pages website before, you can follow this webpag
 
 ### 1. Video
 
-[Insert final project video here]
+https://drive.google.com/file/d/1p764nsIRFncH8L2IfexEU7o_ynaXjqQ5/view?usp=sharing
 
 * The video must demonstrate your key functionality.
 * The video must be 5 minutes or less.
@@ -217,13 +217,23 @@ If you’ve never made a GitHub pages website before, you can follow this webpag
 
 ### 2. Images
 
-[Insert final project images here]
+
+<p float="left">
+  <img src="images/front_view.png"   alt="Front View"  width="120px" />
+  <img src="images/back_view.png"    alt="Back View"   width="120px" />
+  <img src="images/left_view.png"    alt="Left View"   width="120px" />
+  <img src="images/right_view.png"   alt="Right View"  width="120px" />
+  <img src="images/top_view.png"     alt="Top View"    width="120px" />
+  <img src="images/inside_view.png"  alt="Inside View" width="120px" />
+</p>
 
 *Include photos of your device from a few angles. If you have a casework, show both the exterior and interior (where the good EE bits are!).*
 
 ### 3. Results
 
 *What were your results? Namely, what was the final solution/design to your problem?*
+
+The final design was a laser cut enclosure with a cutout for and LCD screen and a spot to insert the sensor. The box has an on/off switch and the device would start graphing grinding data after the current time (from the real time clock) reached the set bedtime value. The demo video shows the graphing on a scale of 5 mins, but in real life the scale would be a normal amount of sleep (e.g. 8 hours). The app component of the project worked fairly well too. The esp32 connected the Blynk IoT app which sent bedtime and waketime data to it, which sent that data to the atmega. Once those were sent, the atmega would send sensor data to the esp32 (and then to the Blynk IoT interface) in order for the user to calibrate the location of the headband/sensor on their temple. Unfortunately, we had to run this project on a separate atmega, because the uart communcation didn't work from the esp32 to the atmega with the rest of the components and software (LCD, clock, and sensor)
 
 #### 3.1 Software Requirements Specification (SRS) Results
 
@@ -233,9 +243,14 @@ If you’ve never made a GitHub pages website before, you can follow this webpag
 
 *Validate at least two requirements, showing how you tested and your proof of work (videos, images, logic analyzer/oscilloscope captures, etc.).*
 
-| ID     | Description                                                                                               | Validation Outcome                                                                          |
-| ------ | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| SRS-01 | The IMU 3-axis acceleration will be measured with 16-bit depth every 100 milliseconds +/-10 milliseconds. | Confirmed, logged output from the MCU is saved to "validation" folder in GitHub repository. |
+| ID     | Description                                                                                                                                              | Validation Outcome                                                                                                                                                                                                                                                                                                                                                                       |
+| ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SRS-01 | The EMG sensor will detect changes in muscle activation of the temporalis muscle                                                                         | Confirmed, the EMG sensor was able to precisely detect when the temporalis muscle moved                                                                                                                                                                                                                                                                                                  |
+| SRS-02 | The ADC will convert the analog signals from the EMG into digital values                                                                                 | Confirmed, we were able to observe the ADC values from the EMG sensor match the magnitude of its analog signal                                                                                                                                                                                                                                                                           |
+| SRS-03 | The LCD display will show the intensity of grinding over time for the night (using the real time clock to track time).<br />LCD will comunicate over SPI | Confirmed. The LCD screen graphs the values from the EMG sensor appropriately                                                                                                                                                                                                                                                                                                            |
+| SRS-04 | During the day time a buzzer sounds when the clenching is above a certain threshold                                                                      | Failed, never had time to implement this feature, as we prioritized detection of night bruxism                                                                                                                                                                                                                                                                                           |
+| SRS-05 | RTC will communicate over I2c to update the atmega on what the current time is                                                                           | Confirmed, we were able to code functions that allowed the RTC to communicate over I2C with the atmega                                                                                                                                                                                                                                                                                   |
+| SRS-06 | ESP32 will communicate to atmega over uart to atmega, and it will communicate with the blynk iot app                                                     | Semi-confirmed, we were able to get the blynk app working and the esp32 communicating with AN atmega, but<br />it wouldn't work when integrated with the whole system. We believe this was because the atmega was running out <br />of memory/storage, because we changed nothing when testing with the other atmega except for removing<br />the other main components of the project. |
 
 #### 3.2 Hardware Requirements Specification (HRS) Results
 
@@ -245,24 +260,37 @@ If you’ve never made a GitHub pages website before, you can follow this webpag
 
 *Validate at least two requirements, showing how you tested and your proof of work (videos, images, logic analyzer/oscilloscope captures, etc.).*
 
-| ID     | Description                                                                                                                        | Validation Outcome                                                                                                      |
-| ------ | ---------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| HRS-01 | A distance sensor shall be used for obstacle detection. The sensor shall detect obstacles at a maximum distance of at least 10 cm. | Confirmed, sensed obstacles up to 15cm. Video in "validation" folder, shows tape measure and logged output to terminal. |
-|        |                                                                                                                                    |                                                                                                                         |
+| ID     | Description                                                                           | Validation Outcome                                                                                                                                                                                                                                |
+| ------ | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| HRS-01 | The EMG sensors should be substantially sensitive to detect small muscle contractions | Confirmed. The EMG sensor we purchased fit out application perfectly. It only picked up the small movements<br />ouf the temporalis muscle, without picking up the noise of someone tossing and turning in bed                                    |
+| HRS-02 | The ADC module should support sufficient resolution for the signal                    | Confirmed, the onboard ADC was able to pick up the analog values from the sensor                                                                                                                                                                  |
+| HRS-03 | The headband should be somewhat comfortable                                           | Semi-confirmed. The headband itself isn't bad, however the box attachment is somewhat<br />cumbersome to deal with. Ideally the product would be on a flex PCB built into the <br />headband.                                                    |
+| HRS-04 | Have a real time clock that can track over long periods time                          | Confirmed, the RTC worked well                                                                                                                                                                                                                    |
+| HRS-05 | Power module with battery add-on and buck converter                                   | Confirmed, though not in the demo video, we had the battery hooked up to the<br />entire system, and included a button on the side. The device would turn on when the button<br />was pressed and begin graphing (once the time reached bedtime). |
+| HRS-06 | High pass RC filter                                                                   | We added this once we figured out that the EMG sensor analog values (which we red from the<br />scope in detkin) had far too much noise. This filtered out the low frequency noise<br />which enabled us to correctly interpret the sensor data.  |
+| HRS-07 | ESP32 with logic shifter                                                              | Semiconfirmed - the ESP32 worked on its own, however it turned out we didnt<br />even need the logic shifter (it worked when direclty plugged into the atmega). Though again,<br />that was with a separate atmega.                               |
 
 ### 4. Conclusion
 
 Reflect on your project. Some questions to address:
 
 * What did you learn from it?
+  The biggest thing we learned was implementing serial communication with bare-metal programming. In ESE 1110 we all had similar projects however most people used an arduino and arduino libraries for every external device. This time we actually had to program how the atmega would communicate with, for example, the clock over I2C. We had to get the atmega to communicate with the esp32 over uart, and with the LCD over SPI. This let us gain a much deeper appreciation for the underlying engineering that went in to design even simple electronic components like these (because we had to actually read the datasheets).
 * What went well?
+  The biggest challenge that we were actually able to overcome was reading sensor values from the EMG sensor. Going into this project we thought that this is what would give us the most diffiiculty because there are so many obstacles to overcome: what if the muscle movements are too small and the sensor isn't sensitive enough, what if the analog value it outputs isn't a high enough voltage, etc. But we were successfully able to read the EMG sensor data, convert it with the ADC, and process it in our program. The front-end with the graph works pretty well, and the physical packaging itself we are proud. While we weren't able to get the esp32 communicating with the front end, the calibration and bedtime setting as a standalone feature works fairly well.
 * What accomplishments are you proud of?
-* What did you learn/gain from this experience?
+  Again the physical enclosure that we made looks fairly sleek so we are proud of that. We are also very proud of the power management system, because we had the device turn on/off with the click of a button. Getting the RTC working was another major accomplishment we are proud of, because acutally correctly programming a serial communication protocol is something none of us have ever done. The blynk IoT interface we designed looks pretty sleek, and again the fact that callibration worked was also something we were proud of.
 * Did you have to change your approach?
+  Yes there were numerous times we had to change our approach. For example when we were testing the sensor we realized that the ADC values were too noisy, so we had to add an RC high-pass filter and envelope extraction in software. When we were trying to get the esp32 to communicate with the atmega over uart, we first tried to do it with a logic level shifter. It wasn't working so we just scrapped it and direclty connected the uart to the atmega (which worked for some reason).
 * What could have been done differently?
+  We should have started testing on the communication between the atmega and esp32 much earlier because that seemed to be the biggest bottleneck and failure of our project. Also adding and SD card to the atmega because we suspect ours literally just ran out of memory.
 * Did you encounter obstacles that you didn’t anticipate?
+  There were a lot of issues that were very frustrating because they were seemingly just out of our control because something was wrong with the hardware. For example when programming the LCD screen at some point it literally just white screened and would not stop white screening no matter how many times we unplugged it, reproggamed it, or switched to a different LCD. The issue for some reason was resolved when I created a new project and slowly added back the code from my old project. Then it never came up again. Another issue was when we were attemping to program the esp32 it would sometimes just fail to upload from anyone's computer because it would stop being recognized by the serial port halfway through uploading. We tried everything to debug the issue but the only thing that worked was switching the esp32 to another one. Until, that one started to have the same issue. So we had keep switching to new esp32s whenever they stopped being able to upload. We then stumbled upon one that worked without any issues, but either way this caused us a lot of pain. Finally, we had a lot of issues getting the esp32 to communicate with the atmega. We got it communicating with AN atmega, but it wouldn't work when integrated with the whole system. We believe this was because the atmega was running out of memory/storage, because we changed nothing when testing with the other atmega except for removing the other main components of the project. This obstacle was never resolved
 * What could be a next step for this project?
+  Next step would be to actually get the esp32 communication with the atmega to work. Once the full embedded system prototype is working, we would transition to designing the circuit on a flex pcb, and integrating all the components into the headband so it's comfortable. Then we would partner with myTMJrelief to sell the device.
 
 ## References
 
 Fill in your references here as you work on your final project. Describe any libraries used here.
+
+We used the LCD SPI library from lab4 and the uart library from the previous labs as well.
